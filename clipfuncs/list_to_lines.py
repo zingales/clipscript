@@ -5,4 +5,4 @@ def get_clipboard_function(commandString):
 
 
 def list_to_lines(text):
-    return text.replace(',',',\n')
+    return text.replace(',', ',\n')
