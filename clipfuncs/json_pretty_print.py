@@ -1,5 +1,6 @@
 import json
 
+
 def get_clipboard_function(commandString):
     return json_pretty_print
 
