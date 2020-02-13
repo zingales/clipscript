@@ -5,11 +5,8 @@ Run python on content in your clipboard save results to your clipboard. Trival t
 # To Install
 
 `pip install pyperclip`
+`pip install rumps`
 
 
-# To Run From command line
-`python main.py ` + list of commands
-
-
-# Examples
-`python main.py quote_list list_to_lines`
+# To Run
+`python3 main.py`
