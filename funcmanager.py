@@ -30,8 +30,7 @@ def find_command(commandString):
     logging.warning("no package matched {0}".format(commandString))
 
 
-
-def get_command(name):
+def get_module(name):
     try:
         logging.debug("trying to get command {0}".format(name))
         path = "{0}/clipfuncs/{1}.py".format(pathlib.Path(__file__).parent.absolute(), name)
@@ -39,6 +38,16 @@ def get_command(name):
         module = import_from_path(path, name)
         logging.debug("module loaded {0}".format(type(module)))
         logging.debug("module fields:\n{0}".format(dir(module)))
+        return module
+    except Exception:
+        logging.exception("Failure in loading module {0}".format(name))
+        raise
+
+
+def get_command(name):
+
+    try:
+        module = get_module(name)
         if hasattr(module, 'func_description'):
             logging.debug('func description:"{0}"'.format(module.func_description))
 
@@ -55,4 +64,4 @@ def get_command(name):
 
 
 def get_list_of_commands():
-    return [name for (_, name, _) in pkgutil.iter_modules([os.path.join(os.path.dirname(__file__),"clipfuncs")])]
+    return [name for (_, name, _) in pkgutil.iter_modules([os.path.join(os.path.dirname(__file__),"clipfuncs")]) if not name.startswith('_')]

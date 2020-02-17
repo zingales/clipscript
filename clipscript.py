@@ -6,7 +6,7 @@ import clipboardmanager
 class ClipScriptApp(object):
 
     def __init__(self):
-        self.app = rumps.App("ClipScript", "⛽️", quit_button=None)
+        self.app = rumps.App("ClipScript", "☄️", quit_button=None)
 
         self.rebuild_menu(None)
 
