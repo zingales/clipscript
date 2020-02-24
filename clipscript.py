@@ -42,7 +42,14 @@ class ClipScriptApp(object):
             original_clipboard_text = clipboardmanager.get_latest()
             logging.debug("copied {0} from clipboard".format(original_clipboard_text))
 
-            new_clipboard_text = funcmanager.get_command(name)(original_clipboard_text)
+            new_clipboard_text = None
+            try:
+                new_clipboard_text = funcmanager.get_command(name)(original_clipboard_text)
+            except Exception as exception:
+                logging.debug('triggering notification')
+                rumps.notification(title='Error in running clipfunc', subtitle=type(exception).__name__, message=str(exception))
+                logging.exception(exception)
+
             logging.debug("new clipboard {0}".format(new_clipboard_text))
 
             # text sanitization

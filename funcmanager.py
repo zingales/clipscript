@@ -7,6 +7,15 @@ import pathlib
 import logging
 
 
+class ModuleFailedToImport(Exception):
+    pass
+
+class ModuleMissingClipboardFunction(Exception):
+    pass
+
+class FailureInGettingClipboardFunction(Exception):
+    pass
+
 def match_command_with_package(commandName, packageName):
     return commandName == packageName
 
@@ -41,26 +50,26 @@ def get_module(name):
         return module
     except Exception:
         logging.exception("Failure in loading module {0}".format(name))
-        raise
+        raise ModuleFailedToImport("Failure in loading module {0}".format(name))
 
 
 def get_command(name):
+    module = get_module(name)
+    if hasattr(module, 'func_description'):
+        logging.debug('func description:"{0}"'.format(module.func_description))
+
+    if not hasattr(module, 'get_clipboard_function'):
+        logging.warn("module {0} does not have get_clipboard_function and thus cannot be run")
+        raise ModuleMissingClipboardFunction("module {0} does not have get_clipboard_function and thus cannot be run".format(name))
 
     try:
-        module = get_module(name)
-        if hasattr(module, 'func_description'):
-            logging.debug('func description:"{0}"'.format(module.func_description))
-
-        if not hasattr(module, 'get_clipboard_function'):
-            logging.warn("module {0} does not have get_clipboard_function and thus cannot be run")
-            return
-
         logging.debug("got clipboard function {0}".format(module.get_clipboard_function))
         func = module.get_clipboard_function(name)
         logging.debug("func loaded {0}".format(func))
         return func
-    except Exception:
-        logging.exception("Failure in running func {0}".format(name))
+    except Exception as e:
+        logging.exception("Failure in getting func {0}".format(name))
+        raise FailureInGettingClipboardFunction(e)
 
 
 def get_list_of_commands():
